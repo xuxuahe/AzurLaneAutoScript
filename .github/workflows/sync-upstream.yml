@@ -2,8 +2,9 @@ name: Sync Upstream Repository
 
 on:
   schedule:
-    # 每天凌晨3点运行（UTC时间）
-    - cron: '0 3 * * *'
+    - cron: '0 2 * * *'  # UTC时间2点（北京时间10点）
+    - cron: '0 10 * * *' # UTC时间10点（北京时间18点）
+    - cron: '0 18 * * *' # UTC时间18点（北京时间次日2点）
   workflow_dispatch: # 允许手动触发
 
 jobs:
