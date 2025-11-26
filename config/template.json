@@ -622,7 +622,7 @@
       "AmbushEvade": true
     },
     "Coalition": {
-      "Mode": "hard",
+      "Mode": "area1-normal",
       "Fleet": "single"
     },
     "StopCondition": {
@@ -1193,7 +1193,7 @@
       "AmbushEvade": true
     },
     "Coalition": {
-      "Mode": "sp",
+      "Mode": "area1-normal",
       "Fleet": "single"
     },
     "StopCondition": {
