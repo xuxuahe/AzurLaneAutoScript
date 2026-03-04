@@ -2,6 +2,7 @@ import datetime
 import logging
 import os
 import sys
+import shutil
 from typing import Callable, List
 
 from rich.console import Console, ConsoleOptions, ConsoleRenderable, NewLine
@@ -201,6 +202,61 @@ def set_file_logger(name=pyw_name):
     logger.log_file = log_file
 
 
+def clean_old_logs(days=3):
+    """
+    清理超过指定天数的日志文件和文件夹
+    :param days: 保留最近多少天的日志，默认为3天
+    """
+    log_dir = './log'
+    logerror_dir = './log/error'
+
+    now = datetime.datetime.now()
+    cutoff = now - datetime.timedelta(days=days)
+
+    try:
+        # 处理普通日志目录
+        if os.path.exists(log_dir):
+            for item_name in os.listdir(log_dir):
+                item_path = os.path.join(log_dir, item_name)
+                
+                # 获取文件的最后修改时间
+                item_mtime = datetime.datetime.fromtimestamp(os.path.getmtime(item_path))
+                
+                if item_mtime < cutoff:
+                    if os.path.isfile(item_path):
+                        # 删除过期文件
+                        os.remove(item_path)
+                        logger.info(f"Deleted old log file: {item_path}")
+                    elif os.path.isdir(item_path):
+                        # 删除过期文件夹及其所有内容
+                        shutil.rmtree(item_path)
+                        logger.info(f"Deleted old log folder: {item_path}")
+
+        # 处理错误日志目录
+        if os.path.exists(logerror_dir):
+            for item_name in os.listdir(logerror_dir):
+                item_path = os.path.join(logerror_dir, item_name)
+                
+                # 获取项目的最后修改时间
+                item_mtime = datetime.datetime.fromtimestamp(os.path.getmtime(item_path))
+                
+                if item_mtime < cutoff:
+                    if os.path.isfile(item_path):
+                        # 删除过期文件
+                        os.remove(item_path)
+                        logger.info(f"Deleted old log file: {item_path}")
+                    elif os.path.isdir(item_path):
+                        # 删除过期文件夹及其所有内容
+                        shutil.rmtree(item_path)
+                        logger.info(f"Deleted old log folder: {item_path}")
+    except FileNotFoundError as e:
+        logger.warning(f"Log directory not found: {e}")
+    except PermissionError as e:
+        logger.error(f"Permission denied when cleaning logs: {e}")
+    except Exception as e:
+        logger.error(f"Error cleaning old logs: {e}")
+
+
 def set_func_logger(func):
     console = HTMLConsole(
         force_terminal=False,
@@ -335,4 +391,5 @@ logger.print = print
 logger.log_file: str
 
 logger.set_file_logger()
+clean_old_logs(days=3)
 logger.hr('Start', level=0)
